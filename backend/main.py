@@ -12,8 +12,7 @@ app = Flask(__name__)
 CORS(app, resources={
     r"/*": {
         "origins": [
-            "https://newidentity.webcris.icu",
-            "http://127.0.0.1:5500"
+            "https://newidentity.webcris.icu"
         ]
     }
 })
