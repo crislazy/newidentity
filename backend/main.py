@@ -24,7 +24,7 @@ def get_real_ip():
 limiter = Limiter(
     get_real_ip,
     app=app,
-    default_limits=["5 per minute"]
+    default_limits=["30 per minute"]
 )
 
 # Format: website: url, taken code, user not found code
