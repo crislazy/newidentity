@@ -1,5 +1,5 @@
 import requests
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from flask_cors import CORS
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
@@ -12,25 +12,32 @@ app = Flask(__name__)
 CORS(app, resources={
     r"/*": {
         "origins": [
-            "https://newidentity.webcris.icu"
+            "https://newidentity.webcris.icu",
+            "http://127.0.0.1:5500"
         ]
     }
 })
 
+def get_real_ip():
+    return request.headers.get("CF-Connecting-IP", request.remote_addr)
+
 # LIMIT :3
 limiter = Limiter(
-    get_remote_address,
+    get_real_ip(),
     app=app,
-    default_limits=["30 per minute"]
+    default_limits=["5 per minute"]
 )
 
 # Format: website: url, taken code, user not found code
 SITES = {
-    "github":   ("https://api.github.com/users/{u}", 200, 404),
-    "codeberg": ("https://codeberg.org/api/v1/users/{u}", 200, 404),
-    "git.gay":  ("https://git.gay/api/v1/users/{u}", 200, 404),
-    "webcris":  ("https://git.webcris.icu/api/v1/users/{u}", 200, 404),
-    "tiktok":   ("https://www.tiktok.com/oembed?url=https://www.tiktok.com/@{u}", 200, 400),
+    "github":     ("https://api.github.com/users/{u}", 200, 404),
+    "gitlab":     ("https://gitlab.com/api/v4/users?username={u}", 304, 301),
+    "codeberg":   ("https://codeberg.org/api/v1/users/{u}", 200, 404),
+    "git.gay":    ("https://git.gay/api/v1/users/{u}", 200, 404),
+#   "webcris":    ("https://git.webcris.icu/api/v1/users/{u}", 200, 404), USED FOR TESTING
+    "tiktok":     ("https://www.tiktok.com/oembed?url=https://www.tiktok.com/@{u}", 200, 400),
+    "bsky":       ("https://public.api.bsky.app/xrpc/com.atproto.identity.resolveHandle?handle={u}.bsky.social", 200, 400),
+    "huggingface":("https://huggingface.co/api/users/{u}/overview", 200, 404)
     # ADD MORE HERE IN FUTURE(MAYBE)
 }
 

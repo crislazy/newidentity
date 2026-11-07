@@ -1,21 +1,36 @@
 const form = document.getElementById('coolform');
 const resp = document.getElementById('response');
 
-const API_URL = "https://api-newidentity.webcris.icu";
+const sites = [
+    "github",
+    "gitlab",
+    "codeberg",
+    "git.gay",
+    "tiktok",
+    "bsky",
+    "huggingface"
+];
+
+const API_URL = "http://127.0.0.1:5000";
 
 form.addEventListener('submit', async (event) => {
-    event.preventDefault();
-    console.log("run")
-    const username = document.getElementById('username').value;
+  event.preventDefault();
+  console.log("run");
+  resp.innerHTML = "Loading";
+  const username = document.getElementById('username').value;
 
-    try {
-      const res = await fetch(`${API_URL}/get/github/${username}`);
-      const res1 = await fetch(`${API_URL}/get/tiktok/${username}`);
-      const data = await res.json();
-      const data1 = await res1.json()
+  try {
+    const results = await Promise.all(
+        sites.map(async site => {
+            const res = await fetch(`${API_URL}/get/${site}/${username}`);
+            const data = await res.json();
 
-      resp.innerHTML = `GitHub: ${data.status} \n TikTok: ${data1.status}`;
-    } catch (error) {
-      console.error('Request failed:', error);
-    }
+            return `<p>${site}: ${data.status}</p>`;
+        })
+    );
+
+    resp.innerHTML = results.join("");
+  } catch (error) {
+    console.error('Request failed:', error);
+  }
 });
