@@ -22,7 +22,7 @@ def get_real_ip():
 
 # LIMIT :3
 limiter = Limiter(
-    get_real_ip(),
+    get_real_ip,
     app=app,
     default_limits=["5 per minute"]
 )
