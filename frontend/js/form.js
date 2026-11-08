@@ -11,7 +11,7 @@ const sites = [
     "huggingface"
 ];
 
-const API_URL = "https://api-newidentity.webcris.icu";
+const API_URL = "https://newidentity-api.webcris.icu";
 
 form.addEventListener('submit', async (event) => {
   event.preventDefault();

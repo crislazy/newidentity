@@ -60,7 +60,7 @@ Before running your own instance, make these changes:
 Open your frontend JavaScript file and change:
 
 ```js
-const API_URL = "https://api-newidentity.webcris.icu";
+const API_URL = "https://newidentity-api.webcris.icu";
 ```
 
 to your own backend URL, for example:
