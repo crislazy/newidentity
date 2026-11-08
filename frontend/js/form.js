@@ -20,7 +20,7 @@ form.addEventListener('submit', async (event) => {
   const username = document.getElementById('username').value;
 
   try {
-    const results = await Promise.all(
+    const results = await Promise.allSettled(
         sites.map(async site => {
             const res = await fetch(`${API_URL}/get/${site}/${username}`);
             const data = await res.json();
@@ -29,7 +29,7 @@ form.addEventListener('submit', async (event) => {
         })
     );
 
-    resp.innerHTML = results.join("");
+    resp.innerHTML = results.map(r => r.value || "<p>Error</p>").join("");
   } catch (error) {
     console.error('Request failed:', error);
   }
