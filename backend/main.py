@@ -24,7 +24,7 @@ def get_real_ip():
 limiter = Limiter(
     get_real_ip,
     app=app,
-    default_limits=["30 per minute"]
+    default_limits=["60 per minute"]
 )
 
 # Format: website: url, taken code, user not found code
@@ -64,7 +64,7 @@ def get(site, username):
             return jsonify({"status": "idk bro, email cris and ask him to check the console :/"}), 502
 
     if r.status_code == taken_code:
-        return jsonify({"status": "taken"}), 400
+        return jsonify({"status": "taken"}), 200
     elif r.status_code == free_code:
         return jsonify({"status": "available"}), 200
     else:
