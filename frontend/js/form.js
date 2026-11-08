@@ -22,14 +22,24 @@ form.addEventListener('submit', async (event) => {
   try {
     const results = await Promise.allSettled(
         sites.map(async site => {
-            const res = await fetch(`${API_URL}/get/${site}/${username}`);
-            const data = await res.json();
+          const res = await fetch(`${API_URL}/get/${site}/${username}`);
 
-            return `<p>${site}: ${data.status}</p>`;
+          if (!res.ok) throw new Error(res.status);
+
+          const data = await res.json();
+
+          return `<p>${site}: ${data.status}</p>`;
         })
     );
 
-    resp.innerHTML = results.map(r => r.value || "<p>Error</p>").join("");
+    resp.innerHTML = results.map((r, i) => {
+      if (r.status == "rejected") {
+        const error = r.reason;
+        return `<p>${sites[i]}: ${error.message === "429" ? "Rate limited" : "Error"}</p>`;
+      }
+
+      return r.value
+    }).join("");
   } catch (error) {
     console.error('Request failed:', error);
   }
